@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the BUP-Guide app.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" }
+      },
+      "required": ["uid"]
+    },
+    "ChatThread": {
+      "title": "ChatThread",
+      "description": "Conversation history for a user.",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "title": { "type": "string" },
+        "updatedAt": { "type": "number" },
+        "messages": {
+          "type": "array",
+          "items": { "$ref": "#/entities/ChatMessage" }
+        }
+      },
+      "required": ["ownerId", "updatedAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A message in a chat thread.",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["role", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "#/entities/User",
+      "description": "User profile document."
+    },
+    "/chatThreads/{threadId}": {
+      "schema": "#/entities/ChatThread",
+      "description": "Chat threads belonging to a user."
+    }
+  }
+}

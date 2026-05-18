@@ -1,0 +1,8 @@
+{
+  "name": "BUP-Guide",
+  "description": "Bicol University Campus Virtual Assistant chatbot with voice-to-text, text-to-speech, and personalized dashboard.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": []
+}

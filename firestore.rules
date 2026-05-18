@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isSignedIn() { return request.auth != null; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+
+    // Validation Blueprint for User
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid']) &&
+             data.uid is string && data.uid.size() > 0 &&
+             (!('name' in data) || data.name is string) &&
+             (!('email' in data) || data.email is string);
+    }
+
+    // Validation Blueprint for ChatThread
+    function isValidChatThreadCreate(data) {
+      return data.keys().hasAll(['ownerId', 'updatedAt']) &&
+             data.ownerId == request.auth.uid &&
+             data.updatedAt is timestamp && // Actually, using timestamp type in firestore -> wait. The schema says number. Let's enforce number for ease or request.time for strict. Let's do number for easy client JS.
+             data.updatedAt is number &&
+             (!('title' in data) || data.title is string) &&
+             (!('messages' in data) || (data.messages is list));
+    }
+
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && isValidId(userId) && userId == request.auth.uid && isValidUser(incoming());
+      allow update: if isSignedIn() && userId == request.auth.uid && isValidUser(incoming());
+    }
+
+    match /chatThreads/{threadId} {
+      // Must be owner.
+      allow list, get: if isSignedIn() && existing().ownerId == request.auth.uid;
+      
+      // On create, enforce schema and owner match
+      allow create: if isSignedIn() && isValidId(threadId) && 
+                    incoming().keys().hasAll(['ownerId', 'updatedAt']) && 
+                    incoming().ownerId == request.auth.uid &&
+                    incoming().updatedAt is number &&
+                    (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 200)) &&
+                    (!('messages' in incoming()) || (incoming().messages is list && incoming().messages.size() <= 100));
+
+      // On update, allow changing title, messages, updatedAt. ownerId must remain the same
+      allow update: if isSignedIn() && existing().ownerId == request.auth.uid &&
+                    incoming().ownerId == existing().ownerId &&
+                    incoming().updatedAt is number &&
+                    (!('title' in incoming()) || (incoming().title is string && incoming().title.size() <= 200)) &&
+                    (!('messages' in incoming()) || (incoming().messages is list && incoming().messages.size() <= 100));
+
+      allow delete: if isSignedIn() && existing().ownerId == request.auth.uid;
+    }
+  }
+}
