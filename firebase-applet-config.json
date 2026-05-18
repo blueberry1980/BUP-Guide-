@@ -1,10 +1,9 @@
 {
-  "projectId": "amiable-signifier-007pf",
-  "appId": "1:45455573766:web:545c479a7c2ef6bf939487",
-  "apiKey": "AIzaSyCP1OrHfpt6D5jbqhh_39LV5yVlLjrH61M",
-  "authDomain": "amiable-signifier-007pf.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-ce0a1635-e116-4940-8aa1-e28750e5f33b",
-  "storageBucket": "amiable-signifier-007pf.firebasestorage.app",
-  "messagingSenderId": "45455573766",
-  "measurementId": ""
+  "projectId": "bup-guide",
+  "appId": "1:232074010159:web:84d1bf8c89a0370e11f0da",
+  "apiKey": "AIzaSyBp2BaU7P7oE-4OrV8TBtbrNB8vVOolYsw",
+  "authDomain": "bup-guide.firebaseapp.com",
+  "storageBucket": "bup-guide.firebasestorage.app",
+  "messagingSenderId": "232074010159",
+  "measurementId": "G-D47G9Q2941"
 }
