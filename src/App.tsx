@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Link, useNavigate, useLocation } from 'react-router-dom';
-import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
+import { onAuthStateChanged, signInWithRedirect, signOut, User } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 import { Button } from '@/components/ui/button';
 import { Bot, Home, BookOpen, LogOut, Loader2, Menu } from 'lucide-react';
@@ -51,7 +51,7 @@ export default function App() {
 function LoginPage() {
   const handleLogin = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (error) {
       console.error("Login failed", error);
       alert("Failed to sign in. Please try again in a new tab.");
