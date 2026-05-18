@@ -52,9 +52,16 @@ function LoginPage() {
   const handleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Login failed", error);
-      alert("Failed to sign in. Please try again in a new tab.");
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      
+      if (error.code === 'auth/unauthorized-domain') {
+        alert("Domain not authorized! Please add this Vercel domain to Firebase Console > Authentication > Settings > Authorized domains.");
+      } else if (error.code === 'auth/popup-blocked') {
+        alert("Sign in popup was blocked by your browser. Please allow popups for this site.");
+      } else {
+        alert(`Failed to sign in (${error.message || 'Please try again in a new tab'}).`);
+      }
     }
   };
 
